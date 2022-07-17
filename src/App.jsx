@@ -15,7 +15,6 @@ export function App() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(null);
   const [totalHits, setTotalHits] = useState(null);
-  const CARD_HEIGHT = 325;
 
   useEffect(() => {
     const fetchPictures = async () => {
@@ -33,7 +32,6 @@ export function App() {
         toast.error('Oops! Something went wrong!');
       }
     };
-
     if (name) {
       fetchPictures();
       setIsLoading(true);
@@ -41,15 +39,14 @@ export function App() {
   }, [currentPage, name]);
 
   useEffect(() => {
-    if (currentPage > 1) {
+    const CARD_HEIGHT = 325;
+    if (pictures.length > 0 && currentPage > 1) {
       window.scrollBy({
-        top: CARD_HEIGHT * 2,
+        top: CARD_HEIGHT * 4,
         behavior: 'smooth',
       });
     }
-  }, [currentPage]);
-
-  console.log(currentPage);
+  }, [currentPage, pictures.length]);
 
   const handleImageNameSubmit = searchName => {
     if (searchName !== name) {
@@ -61,7 +58,7 @@ export function App() {
 
   const loadMore = () => {
     setCurrentPage(prevPage => prevPage + 1);
-    if (currentPage === totalPages) {
+    if (currentPage === totalPages - 1) {
       toast.error('End of gallery');
     }
   };
