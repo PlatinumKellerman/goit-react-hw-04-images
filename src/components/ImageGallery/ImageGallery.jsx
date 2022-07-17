@@ -3,47 +3,33 @@ import { GalleryList } from './ImageGallery.styled';
 import { LoadMoreButton } from '../LoadMoreButton/index';
 import { Modal } from '../Modal/index';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { useState } from 'react';
 
-export class ImageGallery extends Component {
-  state = {
-    isOpen: false,
-    largeImageURL: '',
+export function ImageGallery({ pics, loadMore, totalHits }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [largeImage, setLargeImage] = useState('');
+
+  const onModalOpen = largeImageURL => {
+    setIsOpen(true);
+    setLargeImage(largeImageURL);
   };
 
-  onModalOpen = largeImageURL => {
-    this.setState({
-      isOpen: true,
-      largeImageURL: largeImageURL,
-    });
+  const onModalClose = () => {
+    setIsOpen(false);
   };
 
-  onModalClose = () => {
-    this.setState({ isOpen: false });
-  };
-
-  render() {
-    const NumberOfPics = this.props.pics.length;
-    const largeImageURL = this.state.largeImageURL;
-    const { loadMore, pics, tags, totalHits } = this.props;
-    return (
-      <>
-        <GalleryList>
-          <ImageGalleryItem pics={pics} onModalOpen={this.onModalOpen} />
-        </GalleryList>
-        {NumberOfPics >= 12 && NumberOfPics < totalHits && (
-          <LoadMoreButton loadMore={loadMore} text={'Load more'} />
-        )}
-        {this.state.isOpen && (
-          <Modal
-            onClose={this.onModalClose}
-            largeImageURL={largeImageURL}
-            tags={tags}
-          />
-        )}
-      </>
-    );
-  }
+  const NumberOfPics = pics.length;
+  return (
+    <>
+      <GalleryList>
+        <ImageGalleryItem pics={pics} onModalOpen={onModalOpen} />
+      </GalleryList>
+      {NumberOfPics >= 12 && NumberOfPics < totalHits && (
+        <LoadMoreButton loadMore={loadMore} text={'Load more'} />
+      )}
+      {isOpen && <Modal onClose={onModalClose} largeImageURL={largeImage} />}
+    </>
+  );
 }
 
 ImageGallery.propTypes = {
