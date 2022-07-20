@@ -3,9 +3,10 @@ import { ToastContainer } from 'react-toastify';
 import { Container } from './components/Container/index';
 import { Searchbar } from './components/Searchbar/index';
 import { ImageGallery } from './components/ImageGallery/index';
-import { getPic, options } from './services/api';
+import { getPic } from './services/api';
 import { Loader } from 'components/Loader/index';
 import { toast } from 'react-toastify';
+import { PICS_PER_PAGE } from './constants/apiConstants';
 import 'react-toastify/dist/ReactToastify.css';
 
 export function App() {
@@ -21,11 +22,15 @@ export function App() {
       try {
         await getPic(name, currentPage).then(pics => {
           setPictures(prevPics => [...prevPics, ...pics.hits]);
-          setTotalPages(options.params.totalPages);
-          setTotalHits(options.params.totalHits);
+          setTotalHits(pics.totalHits);
+          setTotalPages(Math.ceil(pics.totalHits / PICS_PER_PAGE));
           setIsLoading(false);
           if (currentPage === 1 && pics.total > 0) {
             toast.success(`Found ${pics.total} images!!!`);
+          } else if (pics.totalHits === 0) {
+            toast.error(
+              `Sorry, there are no images matching your search query. Please try again.`
+            );
           }
         });
       } catch (error) {
